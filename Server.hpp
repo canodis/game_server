@@ -13,6 +13,7 @@
 #include <netinet/in.h>
 #include <vector>
 #include <thread>
+#include <functional>
 
 class Server {
 private:
@@ -28,14 +29,18 @@ public:
     fd_set  playersFd;
     fd_set  readFd;
     fd_set  writeFd;
-    std::vector<Client> clients;
+    struct sockaddr_in address;
+    socklen_t addrlen;
+    std::vector<Client *> clients;
     char    request[64];
     char    response[20];
 
     void    findMaxFd();
-    void    sendInit();
     void    requestHandler(int fd);
     void    responseHandler();
     void    threadFunc(int fd);
+    void    acceptNewConnection();
+    void    sendLoginInfo(int fd);
+    void    selectThread();
 };
 

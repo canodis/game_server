@@ -1,7 +1,5 @@
 #include <iostream>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
+#include "mlx-linux/mlx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unordered_map>
@@ -29,40 +27,46 @@ struct vector2 {
 class   Player {
 public:
 	vector2 position;
-	unsigned int color;
+	int		fd;
 };
+
+typedef struct s_data {
+	int		*addr;
+	void	*img;
+}	t_data;
 
 class Game {
 public:
-	// X11 lib
-	Display	*dis;
-	Window	win;
-	GC		gc;
-	XEvent	event;
-	KeySym	key;
-	int		screen;
-	void	close();
-	void	draw();
-	void	eventHandler();
-	bool	isKeyPressed(int keycode, const char* keyMap);
+	// mlx
+	void	*mlx;
+	void	*win;
+	t_data	image;
+	t_data	pimage1;
+	t_data	pimage2;
+
+	void		draw();
+	static int	key_press(int keycode, void *game);
+	static int	update(void	 *g);
 
 	// Game
 	Game(const char *ip_adress, int port = 8080);
 	Game(int port = 8080);
 	int		pIndex;
-	Player	player1;
-	Player	player2;
-	Player	*me;
-	Player	*other;
+	Player	player;
+	Player	AllPlayers[20];
+	int		playerCount;
 
 	// Socket
+	struct sockaddr_in serv_addr;
+
 	char	info[20];
 	char	buffer[64];
 	int		sock;
-	void	requestHandle(char *str);
-	void	selectPlayer();
+	void	requestHandle();
+	void	acceptNewPlayer();
 	void	SocketInit(const char *ip_adress, int port);
 	void	response();
 	void	requestThread();
+	void	loginProccess(char *loginInfo);
 };
 
