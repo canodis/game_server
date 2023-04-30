@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(int port)
+Server::Server(int num_threads, int port) : thread_pool(num_threads)
 {
 	this->server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->server_fd == 0) {

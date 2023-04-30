@@ -11,11 +11,14 @@ server:
 	$(CC) $(SERVER_SRC) -o server
 
 client:
-	$(CC) $(MFLAGS) $(CLIENT_SRC) -o client $(MLXDIR)/libmlx.a 
+	$(CC) $(MFLAGS) $(CLIENT_SRC) -o client $(MLXDIR)/libmlx.a
 
 MINILIBX:
 	make -C $(MLXDIR) --silent
 	@echo "MINILIBX compiled !"
+
+multiclient:
+	$(call while_loop)
 
 clean :
 	rm -rf server

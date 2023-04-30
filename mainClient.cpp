@@ -48,7 +48,7 @@ int	main(int ac, char **av)
 	// if (ac == 3)
 	//     port = atoi(av[2]);
 
-	Game	game;
+	Game	game("10.12.10.1");
 
 	std::thread t1(&Game::requestThread, &game);
 	t1.detach();

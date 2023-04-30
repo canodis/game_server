@@ -10,7 +10,8 @@ void	Server::threadFunc(int fd)
 
 int	main(int argc, char const *argv[])
 {
-	Server  server(8080);
+	size_t num_threads = std::thread::hardware_concurrency();
+	Server  server(num_threads, 8080);
 	int  activity;
 
 	FD_ZERO(&server.playersFd);

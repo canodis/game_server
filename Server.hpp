@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ThreadPool.hpp"
 #include "Client.hpp"
 #include <iostream>
 #include <string>
@@ -17,7 +18,7 @@
 
 class Server {
 public:
-	Server(int port);
+	Server(int num_threads, int port);
 	~Server();
 
 	int		server_fd;
@@ -39,5 +40,7 @@ public:
 	void	selectThread();
 	void	removeClient(int client_fd);
 	void	playerLeft(int fd);
+private:
+	ThreadPool thread_pool;
 };
 
