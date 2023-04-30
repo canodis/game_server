@@ -2,8 +2,7 @@
 
 void Server::threadFunc(int fd)
 {
-    requestHandler(fd);
-    if (clients.size() < 2)
+    if (requestHandler(fd) == false || clients.size() < 2)
         return ;
     responseHandler();
 }

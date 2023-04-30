@@ -36,11 +36,13 @@ public:
     char    response[20];
 
     void    findMaxFd();
-    void    requestHandler(int fd);
+    bool    requestHandler(int fd);
     void    responseHandler();
     void    threadFunc(int fd);
     void    acceptNewConnection();
     void    sendLoginInfo(int fd);
     void    selectThread();
+    void    removeClient(int client_fd);
+    void    playerLeft(int fd);
 };
 

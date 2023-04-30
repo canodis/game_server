@@ -30,11 +30,16 @@ Server::Server(int port)
 
 Server::~Server() { }
 
-void    Server::requestHandler(int fd)
+bool    Server::requestHandler(int fd)
 {
     memset(this->request, 0, sizeof(this->request));
     int valread = recv(fd, this->request, 64, 0);
+    if (valread <= 0) { 
+        this->playerLeft(fd);
+        return (false);
+    }
     this->request[valread] = 0;
+    return true;
 }
 
 void    Server::responseHandler()
@@ -86,4 +91,36 @@ void    Server::acceptNewConnection()
             sendLoginInfo(clients[i]->fd);
     }
     printf("New Player connected !\n");
+}
+
+void Server::removeClient(int client_fd) {
+    auto it = std::find_if(clients.begin(), clients.end(), [&client_fd](const Client* client) {
+        return client->fd == client_fd;
+    });
+    if (it != clients.end()) {
+        delete *it;
+        clients.erase(it);
+    }
+}
+
+void    Server::playerLeft(int fd)
+{
+    std::cout << "Client disconnected: " << fd << std::endl;
+    FD_CLR(fd, &playersFd);
+    close(fd);
+    removeClient(fd);
+    findMaxFd();
+    memset(response, 0, sizeof(response));
+    sprintf(response, "left %d ", fd);
+    for (int i = 0; i < clients.size(); i++)
+        send(clients[i]->fd, response, strlen(response), 0);
+}
+
+void    Server::findMaxFd()
+{
+    int max = 0;
+    for (int i = 0; i < clients.size(); i++)
+        if (clients[i]->fd > max)
+            max = clients[i]->fd;
+    this->max_fd = max;
 }

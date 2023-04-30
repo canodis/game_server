@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <thread>
 #include <ctime>
+#include <vector>
 
 #define HEIGTH 800
 #define WIDTH 600
@@ -26,6 +27,8 @@ struct vector2 {
 
 class   Player {
 public:
+	Player();
+	Player(int fd, int posx, int posy);
 	vector2 position;
 	int		fd;
 };
@@ -62,7 +65,7 @@ public:
 	Game(int port = 8080);
 	int		pIndex;
 	Player	player;
-	Player	AllPlayers[20];
+	std::vector<Player *> allPlayers;
 	int		playerCount;
 	t_key	key;
 	void	move();
@@ -79,5 +82,6 @@ public:
 	void	response();
 	void	requestThread();
 	void	loginProccess(char *loginInfo);
+	void	deletePlayer();
 };
 

@@ -7,17 +7,11 @@ Game::Game(const char *ip_adress, int port)
     int a;
 
     mlx = mlx_init();
-    win = mlx_new_window(mlx,  WIDTH, HEIGTH, "canodis");
     playerCount = 0;
-    memset(AllPlayers, 0, sizeof(AllPlayers));
     player.position.x = 0;
     player.position.y = 0;
-    // image.img = mlx_new_image(mlx, WIDTH, HEIGTH);
-    // image.addr = (int *)mlx_get_data_addr(image.img, &a, &a, &a);
     pimage1.img = mlx_xpm_file_to_image(mlx, "sprite1.xpm", &a, &a);
     pimage2.img = mlx_xpm_file_to_image(mlx, "sprite2.xpm", &a, &a);
-    // pimage1.addr = (int *)mlx_get_data_addr(pimage1.img, &a, &a, &a);
-    // pimage2.addr = (int *)mlx_get_data_addr(pimage2.img, &a, &a, &a);
     SocketInit(ip_adress, port);
 }
 
@@ -27,7 +21,7 @@ void    Game::draw()
 
     mlx_put_image_to_window(mlx, win, pimage1.img, player.position.x, player.position.y);
     for (int i = 0; i < playerCount; i++) {
-        mlx_put_image_to_window(mlx, win, pimage2.img, AllPlayers[i].position.x, AllPlayers[i].position.y);
+        mlx_put_image_to_window(mlx, win, pimage2.img, allPlayers[i]->position.x, allPlayers[i]->position.y);
     }
 }
 
@@ -39,19 +33,21 @@ void    Game::requestHandle()
 
     if (strncmp(this->buffer, "new", 3) == 0)
         acceptNewPlayer();
+    else if (strncmp(this->buffer, "left", 4) == 0)
+        deletePlayer();
     else
     {
         fd = atoi(this->buffer);
         for (i = 0; i < playerCount; i++)
-            if (AllPlayers[i].fd == fd)
+            if (allPlayers[i]->fd == fd)
                 break;
         while (this->buffer[index] != 32)
             index++;
-        AllPlayers[i].position.x = atoi(&this->buffer[index]);
+        allPlayers[i]->position.x = atoi(&this->buffer[index]);
             index++;
         while (this->buffer[index] != 32)
             index++;
-        AllPlayers[i].position.y = atoi(&this->buffer[index]);
+        allPlayers[i]->position.y = atoi(&this->buffer[index]);
     }
     
 }
@@ -115,9 +111,8 @@ int Game::key_press(int keycode, void *game)
 void    Game::acceptNewPlayer()
 {
     int fd = atoi(&this->buffer[3]);
-    AllPlayers[playerCount].fd = fd;
-    AllPlayers[playerCount].position.x = 0;
-    AllPlayers[playerCount].position.y = 0;
+    
+    allPlayers.push_back(new Player(fd, 0, 0));
     playerCount++;
 }
 
@@ -130,28 +125,29 @@ void    Game::loginProccess(char *loginInfo)
     for (int i = 0; i < pCount - 1; i++) {
         while (loginInfo[index] != 32 && loginInfo[index])
             index++;
-        AllPlayers[playerCount].fd = atoi(&loginInfo[index]);
-        AllPlayers[playerCount].position.x = 0;
-        AllPlayers[playerCount].position.y = 0;
+        allPlayers.push_back(new Player(atoi(&loginInfo[index]), 0, 0));
         playerCount++;
         index++;
     }
+    char title[20];
+    sprintf(title, "Selam %d", myFd);
+    win = mlx_new_window(mlx,  WIDTH, HEIGTH, title);
     pIndex = myFd;
 }
 
 void    Game::move()
 {
     if (key.a) {
-        player.position.x -= 1; 
+        player.position.x -= 2; 
     }
     if (key.d) {
-        player.position.x += 1; 
+        player.position.x += 2; 
     }
     if (key.s) {
-        player.position.y += 1; 
+        player.position.y += 2; 
     }
     if (key.w) {
-        player.position.y -= 1; 
+        player.position.y -= 2; 
     }
 }
 
@@ -180,3 +176,22 @@ int Game::exit_game(int a, void *game) {
     mlx_destroy_window(g->mlx, g->win);
     exit(1);
 }
+
+void    Game::deletePlayer() {
+    int playerFd = atoi(&this->buffer[4]);
+    auto it = std::find_if(allPlayers.begin(), allPlayers.end(), [&playerFd](const Player* player) {
+        return player->fd == playerFd;
+    });
+    if (it != allPlayers.end()) {
+        delete *it;
+        allPlayers.erase(it);
+    }
+}
+
+Player::Player(int fd, int posx, int posy) {
+    this->fd = fd;
+    this->position.x = posx;
+    this->position.y = posy;
+}
+
+Player::Player() { }
