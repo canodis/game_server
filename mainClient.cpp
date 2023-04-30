@@ -48,7 +48,7 @@ int main(int ac, char **av)
     if (ac == 3)
         port = atoi(av[2]);
 
-    Game game(av[2], port);
+    Game game(av[1], port);
 
     std::thread t1(&Game::requestThread, &game);
     t1.detach();
