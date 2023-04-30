@@ -20,7 +20,7 @@ void Game::requestThread()
                 std::cerr << "Server disconnected" << std::endl;
                 exit(1);
             }
-            printf("alindi : %s\n", buffer);
+            // printf("alindi : %s\n", buffer);
             this->requestHandle();
         }
     }
@@ -30,6 +30,7 @@ int Game::update(void *g)
 {
     Game *game = (Game *)g;
 
+    game->move();
     game->draw();
     game->response();
     usleep(10000);
@@ -52,7 +53,8 @@ int main(int ac, char **av)
     std::thread t1(&Game::requestThread, &game);
     t1.detach();
 
-    mlx_hook(game.win, 2, 1, Game::key_press, &game);
+    mlx_hook(game.win, 2, 1L << 0, Game::key_press, &game);
+    mlx_hook(game.win, 3, 1L << 1, Game::key_release, &game);
     mlx_loop_hook(game.mlx, Game::update, &game);
     mlx_loop(game.mlx);
 

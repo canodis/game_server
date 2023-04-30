@@ -35,6 +35,13 @@ typedef struct s_data {
 	void	*img;
 }	t_data;
 
+typedef struct s_key {
+	bool	a = false;
+	bool	w = false;
+	bool	s = false;
+	bool	d = false;
+}	t_key;
+
 class Game {
 public:
 	// mlx
@@ -46,6 +53,8 @@ public:
 
 	void		draw();
 	static int	key_press(int keycode, void *game);
+	static int	key_release(int keycode, void *game);
+	static int exit_game(int a, void *game);
 	static int	update(void	 *g);
 
 	// Game
@@ -55,6 +64,8 @@ public:
 	Player	player;
 	Player	AllPlayers[20];
 	int		playerCount;
+	t_key	key;
+	void	move();
 
 	// Socket
 	struct sockaddr_in serv_addr;
