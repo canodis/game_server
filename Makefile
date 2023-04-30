@@ -1,5 +1,5 @@
 SERVER_SRC = mainServer.cpp Server.cpp Client.cpp
-CLIENT_SRC = mainClient.cpp Game.cpp
+CLIENT_SRC = mainClient.cpp Game.cpp Player.cpp
 CC = c++ -g -std=c++11
 MLXDIR = mlx-mac
 MFLAGS = -framework OpenGL -framework AppKit

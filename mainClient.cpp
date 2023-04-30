@@ -12,15 +12,15 @@ void Game::requestThread()
         select(this->sock + 1, &readfds, NULL, NULL, NULL);
         if (FD_ISSET(this->sock, &readfds))
         {
-            memset(this->buffer, 0, sizeof(buffer));
+            memset(this->request, 0, sizeof(request));
 
-            if (recv(this->sock, buffer, sizeof(buffer), 0) <= 0)
+            if (recv(this->sock, request, sizeof(request), 0) <= 0)
             {
                 ::close(this->sock);
                 std::cerr << "Server disconnected" << std::endl;
                 exit(1);
             }
-            // printf("alindi : %s\n", buffer);
+            // printf("alindi : %s\n", request);
             this->requestHandle();
         }
     }
@@ -39,16 +39,16 @@ int Game::update(void *g)
 
 int main(int ac, char **av)
 {
-    int port = 8080;
+    // int port = 8080;
 
-    if (ac != 2 && ac != 3) {
-        std::cout << "Ip adresi girmelisin [./client 127.0.0.1]\n3. arguman olarak istege bagli olarak portta girebilirsin\n";
-        exit(0);
-    }
-    if (ac == 3)
-        port = atoi(av[2]);
+    // if (ac != 2 && ac != 3) {
+    //     std::cout << "Ip adresi girmelisin [./client 127.0.0.1]\n3. arguman olarak istege bagli olarak portta girebilirsin\n";
+    //     exit(0);
+    // }
+    // if (ac == 3)
+    //     port = atoi(av[2]);
 
-    Game game(av[1], port);
+    Game game;
 
     std::thread t1(&Game::requestThread, &game);
     t1.detach();

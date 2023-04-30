@@ -15,23 +15,12 @@
 #include <thread>
 #include <ctime>
 #include <vector>
+#include "Player.hpp"
 
 #define HEIGTH 800
 #define WIDTH 600
 
 #define PORT 8080
-
-struct vector2 {
-	int x, y;
-};
-
-class   Player {
-public:
-	Player();
-	Player(int fd, int posx, int posy);
-	vector2 position;
-	int		fd;
-};
 
 typedef struct s_data {
 	int		*addr;
@@ -48,33 +37,31 @@ typedef struct s_key {
 class Game {
 public:
 	// mlx
-	void	*mlx;
-	void	*win;
-	t_data	image;
-	t_data	pimage1;
-	t_data	pimage2;
-
+	void		*mlx;
+	void		*win;
+	t_data		image;
+	t_data		pimage1;
+	t_data		pimage2;
 	void		draw();
 	static int	key_press(int keycode, void *game);
 	static int	key_release(int keycode, void *game);
-	static int exit_game(int a, void *game);
+	static int	exit_game(int a, void *game);
 	static int	update(void	 *g);
+	void		move();
 
 	// Game
 	Game(const char *ip_adress, int port = 8080);
 	Game(int port = 8080);
-	int		pIndex;
+	int						pIndex;
 	Player	player;
-	std::vector<Player *> allPlayers;
-	int		playerCount;
-	t_key	key;
-	void	move();
+	std::vector<Player *>	allPlayers;
+	t_key					key;
 
 	// Socket
-	struct sockaddr_in serv_addr;
+	struct sockaddr_in	serv_addr;
 
-	char	info[20];
-	char	buffer[64];
+	char	res[20];
+	char	request[64];
 	int		sock;
 	void	requestHandle();
 	void	acceptNewPlayer();
