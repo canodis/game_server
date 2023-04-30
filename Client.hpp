@@ -2,8 +2,8 @@
 
 class Client {
 public:
-    int fd;
-    int y;
-    int x;
-    Client(int _fd);
+	int fd;
+	int y;
+	int x;
+	Client(int _fd);
 };

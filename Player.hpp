@@ -4,7 +4,7 @@ struct vector2 {
 	int x, y;
 };
 
-class   Player {
+class	Player {
 public:
 	Player();
 	Player(int fd, int posx, int posy);

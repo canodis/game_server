@@ -10,9 +10,6 @@ all: MINILIBX server client
 server:
 	$(CC) $(SERVER_SRC) -o server
 
-ss: re
-	./server
-
 client:
 	$(CC) $(MFLAGS) $(CLIENT_SRC) -o client $(MLXDIR)/libmlx.a 
 
@@ -23,9 +20,5 @@ MINILIBX:
 clean :
 	rm -rf server
 	rm -rf client
-
-rec: clean client
-
-res: clean server
 
 re: clean all

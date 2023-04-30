@@ -16,33 +16,28 @@
 #include <functional>
 
 class Server {
-private:
-
 public:
-    Server(int port);
-    ~Server();
+	Server(int port);
+	~Server();
 
-    int     server_fd;
-    int     max_fd;
-    int     p1sock;
-    int     p2sock;
-    fd_set  playersFd;
-    fd_set  readFd;
-    fd_set  writeFd;
-    struct sockaddr_in address;
-    socklen_t addrlen;
-    std::vector<Client *> clients;
-    char    request[64];
-    char    response[20];
+	int		server_fd;
+	int		max_fd;
+	fd_set	playersFd;
+	fd_set	readFd;
+	struct sockaddr_in address;
+	socklen_t addrlen;
+	std::vector<Client *> clients;
+	char	request[64];
+	char	response[20];
 
-    void    findMaxFd();
-    bool    requestHandler(int fd);
-    void    responseHandler();
-    void    threadFunc(int fd);
-    void    acceptNewConnection();
-    void    sendLoginInfo(int fd);
-    void    selectThread();
-    void    removeClient(int client_fd);
-    void    playerLeft(int fd);
+	void	findMaxFd();
+	bool	requestHandler(int fd);
+	void	responseHandler();
+	void	threadFunc(int fd);
+	void	acceptNewConnection();
+	void	sendLoginInfo(int fd);
+	void	selectThread();
+	void	removeClient(int client_fd);
+	void	playerLeft(int fd);
 };
 
