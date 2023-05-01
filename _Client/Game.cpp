@@ -13,6 +13,7 @@ Game::Game(const char *ip_adress, const char *username, int port) : uname(userna
 	pIndex = 666;
 	player.position.x = 0;
 	player.position.y = 0;
+	player.username = std::string(uname);
 	pimage1.img = mlx_xpm_file_to_image(mlx, "./Sprites/sprite1.xpm", &a, &a);
 	pimage2.img = mlx_xpm_file_to_image(mlx, "./Sprites/sprite2.xpm", &a, &a);
 	SocketInit(ip_adress, port);
