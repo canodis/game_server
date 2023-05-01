@@ -1,9 +1,13 @@
-SERVER_SRC = mainServer.cpp Server.cpp Client.cpp
-CLIENT_SRC = mainClient.cpp Game.cpp Player.cpp
-CC = c++ -g -std=c++11
-MLXDIR = mlx-mac
-MFLAGS = -framework OpenGL -framework AppKit
-LFLAGS = -Lmlx_linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
+SERVER_DIR	= ./_Server
+CLIENT_DIR	= ./_Client
+MLXDIR		= mlx-linux
+
+SERVER_SRC	= $(wildcard $(SERVER_DIR)/*.cpp)
+CLIENT_SRC	= $(wildcard $(CLIENT_DIR)/*.cpp)
+
+CC			= c++ -g -std=gnu++14
+MFLAGS		= -framework OpenGL -framework AppKit
+LFLAGS		= -Lmlx_linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
 all: MINILIBX server client
 
@@ -11,7 +15,7 @@ server:
 	$(CC) $(SERVER_SRC) -o server
 
 client:
-	$(CC) $(MFLAGS) $(CLIENT_SRC) -o client $(MLXDIR)/libmlx.a
+	$(CC) $(CLIENT_SRC) -o client $(MLXDIR)/libmlx.a -Lmlx_linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz 
 
 MINILIBX:
 	make -C $(MLXDIR) --silent

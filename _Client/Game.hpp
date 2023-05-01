@@ -1,5 +1,7 @@
+#pragma once 
+
 #include <iostream>
-#include "mlx-linux/mlx.h"
+#include "../mlx-linux/mlx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unordered_map>
@@ -34,6 +36,12 @@ typedef struct s_key {
 	bool	d = false;
 }	t_key;
 
+struct Request {
+    int client_fd;
+    int x_pos;
+    int y_pos;
+};
+
 class Game {
 public:
 	// mlx
@@ -45,7 +53,6 @@ public:
 	void		draw();
 	static int	key_press(int keycode, void *game);
 	static int	key_release(int keycode, void *game);
-	static int	exit_game(int a, void *game);
 	static int	update(void	 *g);
 	void		move();
 
@@ -55,6 +62,7 @@ public:
 	int						pIndex;
 	Player	player;
 	std::vector<Player *>	allPlayers;
+	std::unordered_map<int, Player*> playerMap;
 	t_key					key;
 
 	// Socket
@@ -63,12 +71,12 @@ public:
 	char	res[20];
 	char	request[64];
 	int		sock;
-	void	requestHandle();
-	void	acceptNewPlayer();
 	void	SocketInit(const char *ip_adress, int port);
 	void	response();
 	void	requestThread();
-	void	loginProccess(char *loginInfo);
-	void	deletePlayer();
+	void	deletePlayer(int fd);
+	void	parse_requests(const std::string& input);
+	void	PositionRequest(std::istringstream &ss);
+	void	LoginRequest(std::istringstream &ss);
 };
 

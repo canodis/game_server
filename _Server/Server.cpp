@@ -1,6 +1,35 @@
 #include "Server.hpp"
 
-Server::Server(int num_threads, int port) : thread_pool(num_threads)
+#include <string>
+#include <sstream>
+
+struct Request {
+    int client_fd;
+    int x_pos;
+    int y_pos;
+};
+
+std::vector<Request> parse_requests(const std::string& input) {
+    std::vector<Request> requests;
+    std::size_t start = 0, end = 0;
+
+    while ((start = input.find('/', start)) != std::string::npos) {
+        end = input.find('*', start);
+        if (end == std::string::npos) {
+            break;
+        }
+        std::istringstream ss(input.substr(start + 1, end - start - 1));
+        Request req;
+        ss >> req.client_fd >> req.x_pos >> req.y_pos;
+
+        requests.push_back(req);
+        start = end + 1;
+    }
+
+    return requests;
+}
+
+Server::Server(int port)
 {
 	this->server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->server_fd == 0) {
@@ -25,54 +54,40 @@ Server::Server(int num_threads, int port) : thread_pool(num_threads)
 		std::cerr << "Listen failed" << std::endl;
 		exit(1);
 	}
-	std::cout << "Waiting for players to connect..." << std::endl;
+	std::cout << "Server Up..." << std::endl;
 }
 
 Server::~Server() { }
 
-bool	Server::requestHandler(int fd)
+void	Server::responseHandler(char *requ)
 {
-	memset(this->request, 0, sizeof(this->request));
-	int valread = recv(fd, this->request, 64, 0);
-	if (valread <= 0) { 
-		this->playerLeft(fd);
-		return (false);
-	}
-	this->request[valread] = 0;
-	return true;
-}
+	char	res[64];
 
-void	Server::responseHandler()
-{
-	int x, y = 2;
-	int fd = atoi(this->request);
-
-	x = atoi(&this->request[2]);
-	while (this->request[y] != 32 && this->request[y])
-		y++;
-	y = atoi(&this->request[y]);
-	memset(this->response, 0, sizeof(this->response));
-	sprintf(this->response, "%d %d %d ", fd, x, y);
-	for (int i = 0; i < clients.size(); i++)
-	{
-		if (clients[i]->fd != fd)
-			send(clients[i]->fd, this->response, strlen(this->response), 0);
-	}
+	std::vector<Request> requests = parse_requests(requ);
+    for (const auto& req : requests) {
+        sprintf(res, "/Pos%d %d %d*", req.client_fd, req.x_pos, req.y_pos);
+		for (int i = 0; i < clients.size(); i++)
+		{
+			if (clients[i]->fd != req.client_fd) {
+				send(clients[i]->fd, res, strlen(res), 0);
+			}
+		}
+    }
 }
 
 char	sendAll[10];
 
-// [player_count] [your_fd] [all_players_fd(split with whitespaces)]
 void	Server::sendLoginInfo(int fd)
 {
 	std::string loginInfo;
 
-	loginInfo += std::to_string(clients.size()) + " ";
+	loginInfo += "/Login" + std::to_string(clients.size()) + " ";
 	loginInfo += std::to_string(fd) + " ";
 	for (int i = 0; i < clients.size(); i++) {
 		if (clients[i]->fd != fd)
 			loginInfo += std::to_string(clients[i]->fd) + " ";
 	}
+	loginInfo += "*";
 	send(fd, loginInfo.c_str(), strlen(loginInfo.c_str()), 0);
 }
 
@@ -82,8 +97,7 @@ void	Server::acceptNewConnection()
 	FD_SET(new_fd, &playersFd);
 	max_fd = new_fd > max_fd ? new_fd : max_fd;
 	clients.push_back(new Client(new_fd));
-	memset(sendAll, 0, sizeof(sendAll));
-	sprintf(sendAll, "new %d ", new_fd);
+	sprintf(sendAll, "/New %d*", new_fd);
 	for (int i = 0; i < clients.size(); i++) {
 		if (clients[i]->fd != new_fd)
 			send(clients[i]->fd, sendAll, strlen(sendAll), 0);
@@ -106,14 +120,14 @@ void	Server::removeClient(int client_fd) {
 void	Server::playerLeft(int fd)
 {
 	std::cout << "Client disconnected: " << fd << std::endl;
+	char	res[64];
 	FD_CLR(fd, &playersFd);
 	close(fd);
 	removeClient(fd);
 	findMaxFd();
-	memset(response, 0, sizeof(response));
-	sprintf(response, "left %d ", fd);
+	sprintf(res, "/Left %d*", fd);
 	for (int i = 0; i < clients.size(); i++)
-		send(clients[i]->fd, response, strlen(response), 0);
+		send(clients[i]->fd, res, strlen(res), 0);
 }
 
 void	Server::findMaxFd()
@@ -122,5 +136,5 @@ void	Server::findMaxFd()
 	for (int i = 0; i < clients.size(); i++)
 		if (clients[i]->fd > max)
 			max = clients[i]->fd;
-	this->max_fd = max;
+	this->max_fd = max == 0 ? 3 : max;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ThreadPool.hpp"
+// #include "ThreadPool.h"
+#include "Colors.hpp"
 #include "Client.hpp"
 #include <iostream>
 #include <string>
@@ -15,12 +16,12 @@
 #include <vector>
 #include <thread>
 #include <functional>
+#include <algorithm>
 
 class Server {
 public:
-	Server(int num_threads, int port);
+	Server(int port);
 	~Server();
-
 	int		server_fd;
 	int		max_fd;
 	fd_set	playersFd;
@@ -31,16 +32,14 @@ public:
 	char	request[64];
 	char	response[20];
 
+	// ThreadPool threadPool;
+
 	void	findMaxFd();
-	bool	requestHandler(int fd);
-	void	responseHandler();
+	void	responseHandler(char *req);
 	void	threadFunc(int fd);
 	void	acceptNewConnection();
 	void	sendLoginInfo(int fd);
-	void	selectThread();
 	void	removeClient(int client_fd);
 	void	playerLeft(int fd);
-private:
-	ThreadPool thread_pool;
 };
 

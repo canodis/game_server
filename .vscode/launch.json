@@ -8,7 +8,7 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "/goinfre/rtosun/game_server/client",
+            "program": "/home/canodis/Desktop/game_server/server",
             "args": [],
             "cwd": "${workspaceFolder}"
         }

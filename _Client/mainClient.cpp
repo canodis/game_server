@@ -14,14 +14,14 @@ void	Game::requestThread()
 		{
 			memset(this->request, 0, sizeof(request));
 
-			if (recv(this->sock, request, sizeof(request), 0) <= 0)
+			if (recv(this->sock, this->request, sizeof(this->request), 0) <= 0)
 			{
 				::close(this->sock);
 				std::cerr << "Server disconnected" << std::endl;
 				exit(1);
 			}
 			// printf("alindi : %s\n", request);
-			this->requestHandle();
+			this->parse_requests(this->request);
 		}
 	}
 }
@@ -48,7 +48,7 @@ int	main(int ac, char **av)
 	// if (ac == 3)
 	//     port = atoi(av[2]);
 
-	Game	game("10.12.10.1");
+	Game	game;
 
 	std::thread t1(&Game::requestThread, &game);
 	t1.detach();

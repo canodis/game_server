@@ -1,18 +1,23 @@
 #include "Server.hpp"
 
-void	Server::threadFunc(int fd)
+void Server::threadFunc(int fd)
 {
-	if (requestHandler(fd) == false || clients.size() < 2)
+	char	requ[64];
+	int valread = recv(fd, requ, 63, 0);
+	if (valread <= 0) { 
+		this->playerLeft(fd);
 		return ;
-	responseHandler();
+	}
+	requ[valread] = 0;
+	if (clients.size() < 2)
+		return;
+	responseHandler(requ);
 }
 
-
-int	main(int argc, char const *argv[])
+int main(int argc, char const *argv[])
 {
-	size_t num_threads = std::thread::hardware_concurrency();
-	Server  server(num_threads, 8080);
-	int  activity;
+	Server server(8080);
+	int activity;
 
 	FD_ZERO(&server.playersFd);
 	FD_SET(server.server_fd, &server.playersFd);
@@ -21,16 +26,17 @@ int	main(int argc, char const *argv[])
 	while (true)
 	{
 		activity = 0;
-		while (activity == 0) {
+		while (activity == 0)
+		{
 			server.readFd = server.playersFd;
 			activity = select(server.max_fd + 1, &server.readFd, NULL, NULL, NULL);
 		}
 		for (int i = 3; i < server.max_fd + 1; i++)
 		{
-			if (FD_ISSET(i, &server.readFd) && i == server.server_fd) {
+			if (FD_ISSET(i, &server.readFd) && i == server.server_fd)
 				server.acceptNewConnection();
-			}
-			else if (FD_ISSET(i, &server.readFd)) {
+			else if (FD_ISSET(i, &server.readFd))
+			{
 				std::thread t1(std::bind(&Server::threadFunc, &server, i));
 				t1.join();
 			}
