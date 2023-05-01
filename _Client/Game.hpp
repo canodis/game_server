@@ -37,6 +37,7 @@ typedef struct s_key {
 }	t_key;
 
 struct Request {
+	std::string username;
     int client_fd;
     int x_pos;
     int y_pos;
@@ -50,6 +51,7 @@ public:
 	t_data		image;
 	t_data		pimage1;
 	t_data		pimage2;
+	const char	*uname;
 	void		draw();
 	static int	key_press(int keycode, void *game);
 	static int	key_release(int keycode, void *game);
@@ -57,7 +59,7 @@ public:
 	void		move();
 
 	// Game
-	Game(const char *ip_adress, int port = 8080);
+	Game(const char *ip_adress, const char *username = "canodis", int port = 8080);
 	Game(int port = 8080);
 	int						pIndex;
 	Player	player;
@@ -68,7 +70,7 @@ public:
 	// Socket
 	struct sockaddr_in	serv_addr;
 
-	char	res[20];
+	char	res[64];
 	char	request[64];
 	int		sock;
 	void	SocketInit(const char *ip_adress, int port);

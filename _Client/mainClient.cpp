@@ -39,16 +39,16 @@ int	Game::update(void *g)
 
 int	main(int ac, char **av)
 {
-	// int port = 8080;
+	int port = 8080;
 
-	// if (ac != 2 && ac != 3) {
-	//     std::cout << "Ip adresi girmelisin [./client 127.0.0.1]\n3. arguman olarak istege bagli olarak portta girebilirsin\n";
-	//     exit(0);
-	// }
-	// if (ac == 3)
-	//     port = atoi(av[2]);
+	if (ac != 2 && ac != 3) {
+	    std::cout << "Wrong arguments !\n./client [ip adress] [username(optional)]\n";
+	    exit(0);
+	}
+	if (ac == 3)
+	    port = atoi(av[2]);
 
-	Game	game;
+	Game	game(av[1], av[2], 8080);
 
 	std::thread t1(&Game::requestThread, &game);
 	t1.detach();

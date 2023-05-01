@@ -4,6 +4,7 @@
 #include <sstream>
 
 struct Request {
+	std::string username;
     int client_fd;
     int x_pos;
     int y_pos;
@@ -20,7 +21,7 @@ std::vector<Request> parse_requests(const std::string& input) {
         }
         std::istringstream ss(input.substr(start + 1, end - start - 1));
         Request req;
-        ss >> req.client_fd >> req.x_pos >> req.y_pos;
+        ss >> req.client_fd >> req.username >> req.x_pos >> req.y_pos;
 
         requests.push_back(req);
         start = end + 1;
@@ -54,7 +55,9 @@ Server::Server(int port)
 		std::cerr << "Listen failed" << std::endl;
 		exit(1);
 	}
-	std::cout << "Server Up..." << std::endl;
+	std::cout << Color(Color::GREEN) << "Server Up..." << Color(Color::WHITE) << std::endl;
+	signal(SIGINT, signalHandler);
+	instance = this;
 }
 
 Server::~Server() { }
@@ -65,7 +68,7 @@ void	Server::responseHandler(char *requ)
 
 	std::vector<Request> requests = parse_requests(requ);
     for (const auto& req : requests) {
-        sprintf(res, "/Pos%d %d %d*", req.client_fd, req.x_pos, req.y_pos);
+        sprintf(res, "/Pos%d %s %d %d*", req.client_fd, req.username.c_str(), req.x_pos, req.y_pos);
 		for (int i = 0; i < clients.size(); i++)
 		{
 			if (clients[i]->fd != req.client_fd) {
@@ -104,7 +107,7 @@ void	Server::acceptNewConnection()
 		else
 			sendLoginInfo(clients[i]->fd);
 	}
-	printf("New Player connected !\n");
+	std::cout << Color(Color::PURPLE) << "New Player connected : " << new_fd << Color(Color::WHITE) << std::endl; 
 }
 
 void	Server::removeClient(int client_fd) {
@@ -119,7 +122,7 @@ void	Server::removeClient(int client_fd) {
 
 void	Server::playerLeft(int fd)
 {
-	std::cout << "Client disconnected: " << fd << std::endl;
+	std::cout << Color(Color::RED) << "Client disconnected: " << fd << Color(Color::WHITE) << std::endl;
 	char	res[64];
 	FD_CLR(fd, &playersFd);
 	close(fd);
@@ -136,5 +139,5 @@ void	Server::findMaxFd()
 	for (int i = 0; i < clients.size(); i++)
 		if (clients[i]->fd > max)
 			max = clients[i]->fd;
-	this->max_fd = max == 0 ? 3 : max;
+	this->max_fd = max == 0 ? server_fd : max;
 }

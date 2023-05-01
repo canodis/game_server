@@ -1,5 +1,19 @@
 #include "Server.hpp"
 
+Server* Server::instance = nullptr;
+
+void Server::signalHandler(int signum) {
+    std::cout << Color(Color::BOLD) << Color(Color::YELLOW) << "Server is shutting down..." << std::endl;
+
+	for (int i = 0; i < instance->clients.size(); i++) {
+		close(instance->clients[i]->fd);
+		delete(instance->clients[i]);
+	}
+	close(instance->server_fd);
+    exit(signum);
+}
+
+
 void Server::threadFunc(int fd)
 {
 	char	requ[64];

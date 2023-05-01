@@ -11,5 +11,6 @@ public:
 	Player();
 	Player(int fd, int posx, int posy);
 	vector2 position;
+	std::string username;
 	int		fd;
 };

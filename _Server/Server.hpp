@@ -17,11 +17,13 @@
 #include <thread>
 #include <functional>
 #include <algorithm>
+#include <csignal>
 
 class Server {
 public:
 	Server(int port);
 	~Server();
+	static Server* instance;
 	int		server_fd;
 	int		max_fd;
 	fd_set	playersFd;
@@ -41,5 +43,6 @@ public:
 	void	sendLoginInfo(int fd);
 	void	removeClient(int client_fd);
 	void	playerLeft(int fd);
+	static void	signalHandler(int signum);
 };
 

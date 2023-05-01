@@ -8,8 +8,8 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "/home/canodis/Desktop/game_server/server",
-            "args": [],
+            "program": "/home/canodis/Desktop/game_server/client",
+            "args": ["127.0.0.1", "hello"],
             "cwd": "${workspaceFolder}"
         }
     ]
