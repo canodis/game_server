@@ -32,7 +32,6 @@ int	Game::update(void *g)
 
 	game->move();
 	game->draw();
-	game->response();
 	usleep(10000);
 	return (0);
 }

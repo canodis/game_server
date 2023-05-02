@@ -10,7 +10,7 @@ void Server::signalHandler(int signum) {
 		delete(instance->clients[i]);
 	}
 	close(instance->server_fd);
-    exit(signum);
+	exit(signum);
 }
 
 
@@ -39,12 +39,8 @@ int main(int argc, char const *argv[])
 
 	while (true)
 	{
-		activity = 0;
-		while (activity == 0)
-		{
-			server.readFd = server.playersFd;
-			activity = select(server.max_fd + 1, &server.readFd, NULL, NULL, NULL);
-		}
+		server.readFd = server.playersFd;
+		activity = select(server.max_fd + 1, &server.readFd, NULL, NULL, NULL);
 		for (int i = 3; i < server.max_fd + 1; i++)
 		{
 			if (FD_ISSET(i, &server.readFd) && i == server.server_fd)
