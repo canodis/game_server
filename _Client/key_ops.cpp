@@ -1,23 +1,23 @@
 #include "Game.hpp"
 
-int		Game::key_press(int keycode, void *game)
+int	Game::key_press(int keycode, void *game)
 {
 	Game *g = (Game *)game;
 
-	if (keycode == 65307) { // Escape key
+	if (keycode == 53) { // Escape key
 		mlx_destroy_window(g->mlx, g->win);
 		exit(1);
 	}
-	if (keycode == 97) { // A key
+	if (keycode == 0) { // A key
 		g->key.a = true;
 	}
-	if (keycode == 115) { // S key
+	if (keycode == 1) { // S key
 		g->key.s = true;
 	}
-	if (keycode == 100) { // D key
+	if (keycode == 2) { // D key
 		g->key.d = true;
 	}
-	if (keycode == 119) { // W key
+	if (keycode == 13) { // W key
 		g->key.w = true;
 	}
 	return (0);
@@ -39,20 +39,20 @@ void	Game::move()
 	}
 }
 
-int    Game::key_release(int keycode, void *game)
+int	Game::key_release(int keycode, void *game)
 {
 	Game *g = (Game *)game;
 
-	if (keycode == 97) { // A key
+	if (keycode == 0) { // A key
 		g->key.a = false;
 	}
-	if (keycode == 115) { // S key
+	if (keycode == 1) { // S key
 		g->key.s = false;
 	}
-	if (keycode == 100) { // D key
+	if (keycode == 2) { // D key
 		g->key.d = false;
 	}
-	if (keycode == 119) { // W key
+	if (keycode == 13) { // W key
 		g->key.w = false;
 	}
 	return (0);

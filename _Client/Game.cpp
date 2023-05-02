@@ -29,13 +29,16 @@ void	Game::draw()
 		mlx_put_image_to_window(mlx, win, pimage2.img, allPlayers[i]->position.x, allPlayers[i]->position.y);
 		mlx_string_put(mlx, win, allPlayers[i]->position.x + 10, allPlayers[i]->position.y - 20, 0x00FF00, allPlayers[i]->username.c_str());
 	}
+	if (this->chatbar.visible) {
+		mlx_put_image_to_window(mlx, win, this->chatbar.img, WIDTH / 3, HEIGTH / 2);
+	}
 }
 
 void	Game::response()
 {
 	if (pIndex == 666)
 		return ;
-	sprintf(res, "/%d %s %d %d*", pIndex, this->uname, player.position.x, player.position.y);
+	sprintf(res, "/Pos%d %s %d %d*", pIndex, this->uname, player.position.x, player.position.y);
 	send(this->sock, this->res, strlen(this->res), 0);
 }
 
@@ -51,17 +54,17 @@ void	Game::deletePlayer(int fd) {
 
 void Game::parse_requests(const std::string& input)
 {
-    std::size_t start = 0, end = 0;
+	std::size_t start = 0, end = 0;
 
-    while ((start = input.find('/', start)) != std::string::npos) {
-        end = input.find('*', start);
-        if (end == std::string::npos) {
-            break;
-        }
+	while ((start = input.find('/', start)) != std::string::npos) {
+		end = input.find('*', start);
+		if (end == std::string::npos) {
+			break;
+		}
 		std::string substr = input.substr(start + 1, end - start - 1);
 		if (substr.find("Pos") == 0) {
 			std::istringstream ss(substr.substr(3));
-        	this->PositionRequest(ss);
+			this->PositionRequest(ss);
 		} else if (substr.find("New") == 0) {
 			std::istringstream ss(substr.substr(3));
 			int new_fd;
@@ -76,8 +79,8 @@ void Game::parse_requests(const std::string& input)
 			std::istringstream ss(substr.substr(5));
 			LoginRequest(ss);
 		}
-        start = end + 1;
-    }
+		start = end + 1;
+	}
 }
 
 void	Game::PositionRequest(std::istringstream &ss)
@@ -87,7 +90,7 @@ void	Game::PositionRequest(std::istringstream &ss)
 	ss >> req.client_fd >> req.username >> req.x_pos >> req.y_pos;
 
 	for (auto player : allPlayers)
-    	playerMap[player->fd] = player;
+		playerMap[player->fd] = player;
 
 	auto player = playerMap[req.client_fd];
 

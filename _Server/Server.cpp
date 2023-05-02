@@ -5,29 +5,35 @@
 
 struct Request {
 	std::string username;
-    int client_fd;
-    int x_pos;
-    int y_pos;
+	int client_fd;
+	int x_pos;
+	int y_pos;
 };
 
-std::vector<Request> parse_requests(const std::string& input) {
-    std::vector<Request> requests;
-    std::size_t start = 0, end = 0;
+void Server::parse_requests(const std::string& input) {
+	char	res[64];
+	std::size_t start = 0, end = 0;
 
-    while ((start = input.find('/', start)) != std::string::npos) {
-        end = input.find('*', start);
-        if (end == std::string::npos) {
-            break;
-        }
-        std::istringstream ss(input.substr(start + 1, end - start - 1));
-        Request req;
-        ss >> req.client_fd >> req.username >> req.x_pos >> req.y_pos;
-
-        requests.push_back(req);
-        start = end + 1;
-    }
-
-    return requests;
+	while ((start = input.find('/', start)) != std::string::npos) {
+		end = input.find('*', start);
+		if (end == std::string::npos) {
+			break;
+		}
+		std::string substr = input.substr(start + 1, end - start - 1);
+		if (substr.find("Pos") == 0) {
+			std::istringstream ss(substr.substr(3));
+			Request req;
+			ss >> req.client_fd >> req.username >> req.x_pos >> req.y_pos;
+			sprintf(res, "/Pos%d %s %d %d*", req.client_fd, req.username.c_str(),req.x_pos, req.y_pos);
+			for (int i = 0; i < clients.size(); i++)
+			{
+				if (clients[i]->fd != req.client_fd) {
+					send(clients[i]->fd, res, strlen(res), 0);
+				}
+			}
+		}
+		start = end + 1;
+	}
 }
 
 Server::Server(int port)
@@ -61,22 +67,6 @@ Server::Server(int port)
 }
 
 Server::~Server() { }
-
-void	Server::responseHandler(char *requ)
-{
-	char	res[64];
-
-	std::vector<Request> requests = parse_requests(requ);
-    for (const auto& req : requests) {
-        sprintf(res, "/Pos%d %s %d %d*", req.client_fd, req.username.c_str(), req.x_pos, req.y_pos);
-		for (int i = 0; i < clients.size(); i++)
-		{
-			if (clients[i]->fd != req.client_fd) {
-				send(clients[i]->fd, res, strlen(res), 0);
-			}
-		}
-    }
-}
 
 char	sendAll[10];
 

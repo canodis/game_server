@@ -37,12 +37,13 @@ public:
 	// ThreadPool threadPool;
 
 	void	findMaxFd();
-	void	responseHandler(char *req);
 	void	threadFunc(int fd);
 	void	acceptNewConnection();
 	void	sendLoginInfo(int fd);
 	void	removeClient(int client_fd);
 	void	playerLeft(int fd);
 	static void	signalHandler(int signum);
+	void	parse_requests(const std::string& input);
+
 };
 

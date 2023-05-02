@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "../mlx-linux/mlx.h"
+#include "ChatBar.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unordered_map>
@@ -19,8 +20,8 @@
 #include <vector>
 #include "Player.hpp"
 
-#define HEIGTH 800
 #define WIDTH 600
+#define HEIGTH 480
 
 #define PORT 8080
 
@@ -66,6 +67,7 @@ public:
 	std::vector<Player *>	allPlayers;
 	std::unordered_map<int, Player*> playerMap;
 	t_key					key;
+	ChatBar					chatbar;
 
 	// Socket
 	struct sockaddr_in	serv_addr;

@@ -1,7 +1,6 @@
 SERVER_DIR	= ./_Server
 CLIENT_DIR	= ./_Client
-MLXDIR		= mlx-linux
-
+MLXDIR		= mlx-mac
 SERVER_SRC	= $(wildcard $(SERVER_DIR)/*.cpp)
 CLIENT_SRC	= $(wildcard $(CLIENT_DIR)/*.cpp)
 
@@ -15,17 +14,14 @@ server:
 	$(CC) $(SERVER_SRC) -o server
 
 client:
-	$(CC) $(CLIENT_SRC) -o client $(MLXDIR)/libmlx.a -Lmlx_linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz 
+	$(CC) $(MFLAGS) $(CLIENT_SRC) -o client $(MLXDIR)/libmlx.a
 
 MINILIBX:
 	make -C $(MLXDIR) --silent
 	@echo "MINILIBX compiled !"
 
-multiclient:
-	$(call while_loop)
-
 clean :
 	rm -rf server
 	rm -rf client
 
-re: clean all
+re: clean server client

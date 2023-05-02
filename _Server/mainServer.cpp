@@ -3,7 +3,7 @@
 Server* Server::instance = nullptr;
 
 void Server::signalHandler(int signum) {
-    std::cout << Color(Color::BOLD) << Color(Color::YELLOW) << "Server is shutting down..." << std::endl;
+	std::cout << Color(Color::BOLD) << Color(Color::YELLOW) << "Server is shutting down..." << std::endl;
 
 	for (int i = 0; i < instance->clients.size(); i++) {
 		close(instance->clients[i]->fd);
@@ -25,7 +25,7 @@ void Server::threadFunc(int fd)
 	requ[valread] = 0;
 	if (clients.size() < 2)
 		return;
-	responseHandler(requ);
+	parse_requests(requ);
 }
 
 int main(int argc, char const *argv[])
