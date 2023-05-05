@@ -32,22 +32,23 @@ int	Game::update(void *g)
 
 	game->move();
 	game->draw();
+	game->response();
 	usleep(10000);
 	return (0);
 }
 
 int	main(int ac, char **av)
 {
-	int port = 8080;
+	// int port = 8080;
 
-	if (ac != 2 && ac != 3) {
-	    std::cout << "Wrong arguments !\n./client [ip adress] [username(optional)]\n";
-	    exit(0);
-	}
-	if (ac == 3)
-	    port = atoi(av[2]);
+	// if (ac != 2 && ac != 3) {
+	//     std::cout << "Wrong arguments !\n./client [ip adress] [username(optional)]\n";
+	//     exit(0);
+	// }
+	// if (ac == 3)
+	//     port = atoi(av[2]);
 
-	Game	game(av[1], av[2], 8080);
+	Game	game(8080);
 
 	std::thread t1(&Game::requestThread, &game);
 	t1.detach();

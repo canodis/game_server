@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ThreadPool.hpp"
 #include "Colors.hpp"
 #include "Client.hpp"
 #include <iostream>
@@ -18,6 +17,7 @@
 #include <functional>
 #include <algorithm>
 #include <csignal>
+#include <map>
 
 class Server {
 public:
@@ -36,6 +36,7 @@ public:
 
 	// ThreadPool threadPool;
 
+	std::map<int, std::thread *> tMap;
 	void	findMaxFd();
 	void	threadFunc(int fd);
 	void	acceptNewConnection();
@@ -44,6 +45,7 @@ public:
 	void	playerLeft(int fd);
 	static void	signalHandler(int signum);
 	void	parse_requests(const std::string& input);
+	void	handleThread(int fd);
 
 };
 

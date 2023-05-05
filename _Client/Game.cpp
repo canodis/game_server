@@ -2,7 +2,7 @@
 #include <string>
 #include <sstream>
 
-Game::Game(int port) : Game("127.0.0.1", "canodis", port) { }
+Game::Game(int port) : Game("193.164.7.169", "canodis", port) { }
 
 Game::Game(const char *ip_adress, const char *username, int port) : uname(username)
 {
@@ -38,8 +38,9 @@ void	Game::response()
 {
 	if (pIndex == 666)
 		return ;
-	sprintf(res, "/Pos%d %s %d %d*", pIndex, this->uname, player.position.x, player.position.y);
+	sprintf(this->res, "/Pos%d %s %d %d*", pIndex, this->uname, player.position.x, player.position.y);
 	send(this->sock, this->res, strlen(this->res), 0);
+	// printf("gonderildi : %s\n", res);
 }
 
 void	Game::deletePlayer(int fd) {

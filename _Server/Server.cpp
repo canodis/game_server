@@ -97,6 +97,7 @@ void	Server::acceptNewConnection()
 		else
 			sendLoginInfo(clients[i]->fd);
 	}
+	tMap.insert(std::pair<int, std::thread *>(new_fd, new std::thread(std::bind(&Server::handleThread, this, new_fd))));
 	std::cout << Color(Color::PURPLE) << "New Player connected : " << new_fd << Color(Color::WHITE) << std::endl; 
 }
 

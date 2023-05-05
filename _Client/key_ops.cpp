@@ -27,19 +27,19 @@ void	Game::move()
 {
 	if (key.a) {
 		player.position.x -= 2; 
-		response();
+		// response();
 	}
 	if (key.d) {
 		player.position.x += 2; 
-		response();
+		// response();
 	}
 	if (key.s) {
 		player.position.y += 2; 
-		response();
+		// response();
 	}
 	if (key.w) {
 		player.position.y -= 2; 
-		response();
+		// response();
 	}
 }
 

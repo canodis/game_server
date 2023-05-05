@@ -77,6 +77,7 @@
         "future": "cpp",
         "csignal": "cpp",
         "map": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "__tree": "cpp"
     }
 }
